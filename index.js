@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'supersegreto123'; // in prod mettilo in .env
 
 // Middleware per leggere JSON nel body delle richieste
 app.use(express.json());
