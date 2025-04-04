@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
+
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'supersegreto123'; // in prod mettilo in .env
 const corsiPomeridiani = [
