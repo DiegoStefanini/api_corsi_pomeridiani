@@ -1,0 +1,41 @@
+[
+  {
+    "corsoId": 1,
+    "studenti": [
+      {
+        "nomeStudente": "Mario Rossi",
+        "classe": "5CI"
+      },
+      {
+        "nomeStudente": "Lucia Bianchi",
+        "classe": "4AI"
+      },
+      {
+        "nomeStudente": "Matteo Balinzo",
+        "classe": "5BI"
+      }
+    ]
+  },
+  {
+    "corsoId": 2,
+    "studenti": [
+      {
+        "nomeStudente": "Matteo Balinzo",
+        "classe": "5BI"
+      }
+    ]
+  },
+  {
+    "corsoId": 3,
+    "studenti": [
+      {
+        "nomeStudente": "Andrea Romboli",
+        "classe": "5BI"
+      },
+      {
+        "nomeStudente": "Diego Stefanini",
+        "classe": "5BI"
+      }
+    ]
+  }
+]
