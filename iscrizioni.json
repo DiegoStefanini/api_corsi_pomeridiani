@@ -37,5 +37,14 @@
         "classe": "5BI"
       }
     ]
+  },
+  {
+    "corsoId": 4,
+    "studenti": [
+      {
+        "nomeStudente": "Luigi Verdi",
+        "classe": "5CI"
+      }
+    ]
   }
 ]

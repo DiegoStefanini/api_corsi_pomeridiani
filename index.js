@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 const PORT = 3000;
+const jwt = require('jsonwebtoken');
 
 // Middleware per leggere JSON nel body delle richieste
 app.use(express.json());
@@ -10,6 +11,8 @@ app.use(express.json());
 const corsiFilePath = path.join(__dirname, 'corsi.json');
 const iscrizioniFilePath = path.join(__dirname, 'iscrizioni.json');
 const auleFilePath = path.join(__dirname, 'aule.json');
+const utentiPath = path.join(__dirname, 'utenti.json');
+const SECRET_KEY = 'chiave_super_segreta123'; // puoi metterla anche in variabile d'ambiente
 
 
 // Funzione per leggere i corsi dal file JSON
@@ -29,6 +32,13 @@ function leggiAule() {
   const dati = fs.readFileSync(auleFilePath);
   return JSON.parse(dati);
 }
+
+//leggi utenti per permessi
+function leggiUtenti() {
+  const data = fs.readFileSync(utentiPath);
+  return JSON.parse(data);
+}
+
 
 // Funzione per salvare i corsi nel file JSON
 function salvaCorsi(corsi) {
@@ -80,7 +90,7 @@ app.get('/corsi/:id', (req, res) => {
 
 
 // POST per aggiungere un nuovo corso
-app.post('/corsi', (req, res) => {
+app.post('/corsi', autenticazione, checkRuolo('professore'), (req, res) => {
   const corsi = leggiCorsi();
   const aule = leggiAule();
 
@@ -139,7 +149,7 @@ app.post('/corsi', (req, res) => {
 
 
 // DELETE per eliminare un corso in base all'id
-app.delete('/corsi/:id', (req, res) => {
+app.delete('/corsi/:id', autenticazione, checkRuolo('professore'), (req, res) => {
   const corsi = leggiCorsi();
   const corsiAggiornati = corsi.filter(c => c.id !== parseInt(req.params.id));
 
@@ -151,7 +161,7 @@ app.delete('/corsi/:id', (req, res) => {
   res.json({ message: 'Corso eliminato con successo' });
 }); 
 
-app.put('/corsi/:id', (req, res) => {
+app.put('/corsi/:id', autenticazione, checkRuolo('professore'), (req, res) => {
   const corsi = leggiCorsi();
   const indice = corsi.findIndex(c => c.id === parseInt(req.params.id));
 
@@ -171,7 +181,7 @@ app.put('/corsi/:id', (req, res) => {
 
 //------------------------------------------STUDENTI
 
-app.post('/iscrizioni/:corsoId', (req, res) => {
+app.post('/iscrizioni/:corsoId', autenticazione, checkRuolo('alunno'), (req, res) => {
   const corsoId = parseInt(req.params.corsoId);
   const { nomeStudente, classe } = req.body;
 
@@ -265,7 +275,7 @@ app.get('/iscrizioni/:corsoId', (req, res) => {
   });
 });
 
-app.delete('/iscrizioni/:corsoId', (req, res) => {
+app.delete('/iscrizioni/:corsoId', autenticazione, checkRuolo('alunno'), (req, res) => {
   const corsoId = parseInt(req.params.corsoId);
   const { nomeStudente, classe } = req.body;
 
@@ -302,6 +312,7 @@ app.delete('/iscrizioni/:corsoId', (req, res) => {
     message: `Studente ${nomeStudente} della ${classe} rimosso con successo da "${corso.nome}"`
   });
 });
+
 //------------------------------------------TABELLA AULE
 
 app.get('/aule', (req, res) => {
@@ -368,6 +379,56 @@ app.get('/aule', (req, res) => {
 
   res.send(html);
 });
+
+//------------------------------------------LOGIN
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const utenti = leggiUtenti();
+
+  const utente = utenti.find(u => u.username === username && u.password === password);
+
+  if (!utente) {
+    return res.status(401).json({ message: 'Credenziali non valide' });
+  }
+
+  // Genera token con username e ruolo
+  const token = jwt.sign(
+    { username: utente.username, ruolo: utente.ruolo },
+    SECRET_KEY,
+    { expiresIn: '1h' }
+  );
+
+  res.json({ message: 'Login effettuato con successo', token });
+});
+
+
+function autenticazione(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) return res.status(401).json({ message: 'Token mancante' });
+
+  const token = authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Token mancante' });
+
+  try {
+    const user = jwt.verify(token, SECRET_KEY);
+    req.user = user; // aggiungiamo l'utente alla richiesta
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: 'Token non valido' });
+  }
+}
+
+
+function checkRuolo(ruoloRichiesto) {
+  return (req, res, next) => {
+    if (req.user.ruolo !== ruoloRichiesto) {
+      return res.status(403).json({ message: 'Permesso negato' });
+    }
+    next();
+  };
+}
+
 
 
 
