@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const authRoutes        = require('./routes/auth');
 const adminRequests     = require('./routes/adminRequests');
-
+const userRoutes        = require('./routes/users');
 const app = express();
 
 app.use(express.json());
@@ -23,6 +23,7 @@ app.get('/register-school', (req, res) => {
 // monta i router
 app.use('/auth', authRoutes);
 app.use('/admin', adminRequests);
+app.use('/users', userRoutes);   // <— qui monti il nuovo router
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

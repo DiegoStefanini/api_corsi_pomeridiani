@@ -20,7 +20,7 @@ function adminAuth(req, res, next) {
         return next();
     }
     res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
-    return res.status(401).send('Credenziali non valide');
+    return res.status(401).send('Credenziali non valide 3');
 }
 
 module.exports = adminAuth;

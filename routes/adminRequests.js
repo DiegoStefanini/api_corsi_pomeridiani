@@ -3,6 +3,8 @@ const express = require('express');
 const adminAuth = require('../middleware/adminAuth');
 const pool      = require('../db');
 
+
+
 const router = express.Router();
 
 router.use(adminAuth);
@@ -67,14 +69,18 @@ router.get('/requests', adminAuth, async (req, res) => {
                             : '-'
                         }</td>
                         <td>
-                        ${!r.processed_at ? `
+                        ${r.status === 'pending' ? `
                             <form action="/admin/requests/${r.id}/approve" method="post">
                                 <button type="submit">Accetta</button>
                             </form>
                             <form action="/admin/requests/${r.id}/reject" method="post">
                                 <button type="submit">Rifiuta</button>
-                            </form>`: `
-                            <form action="/admin/requests/${r.id}/block" method="post">
+                            </form>`: r.status === 'block' ? `
+                            <form action="/admin/requests/${r.id}/sblock" method="post">
+                                <button type="submit">Sblocca</button>
+                            </form>
+                             ` : `
+                             <form action="/admin/requests/${r.id}/block" method="post">
                                 <button type="submit">Blocca</button>
                             </form>
                              `
@@ -119,20 +125,19 @@ router.post('/requests/:id/approve', adminAuth, async (req, res) => {
     
         // 2) Crea la scuola
         const [schoolResult] = await conn.query(
-            `INSERT INTO scuole (nome, indirizzo, email_amministratore)
-             VALUES (?, ?, ?)`,
-            [reqRow.nome, reqRow.indirizzo, reqRow.email]
+            `INSERT INTO scuole (id, nome, indirizzo, email_amministratore)
+             VALUES (?, ?, ?, ?)`,
+            [reqRow.id, reqRow.nome, reqRow.indirizzo, reqRow.email]
         );
-        const scuolaId = schoolResult.insertId;
     
-        // 3) Crea l’utente amministratore (password già hashata in registration_requests)
+        // // 3) Crea l’utente amministratore (password già hashata in registration_requests)
         await conn.query(
             `INSERT INTO utenti (username, password_hash, ruolo, scuola_id)
              VALUES (?, ?, 'amministratore', ?)`,
-            [reqRow.admin_username, reqRow.admin_password, scuolaId]
+            [reqRow.admin_username, reqRow.admin_password, reqRow.id]
         );
     
-        // 4) Aggiorna lo stato della richiesta
+        // // 4) Aggiorna lo stato della richiesta
         await conn.query(
             `UPDATE registration_requests
              SET status = 'approved', processed_at = NOW()
@@ -142,6 +147,7 @@ router.post('/requests/:id/approve', adminAuth, async (req, res) => {
     
         await conn.commit();
         // Torna alla lista delle richieste
+       
         res.redirect('/admin/requests');
     
     } catch (err) {
@@ -163,11 +169,11 @@ router.post('/requests/:id/reject', adminAuth, async (req, res) => {
         const [result] = await pool.query(
             `UPDATE registration_requests
              SET status = 'rejected', processed_at = NOW()
-             WHERE id = ? AND status = 'pending'`,
+             WHERE id = ?`,
             [id]
         );
         if (result.affectedRows === 0) {
-            return res.status(404).send('Richiesta non trovata o già processata.');
+            return res.status(404).send('Richiesta non trovata.');
         }
         // Torna alla lista delle richieste
         res.redirect('/admin/requests');
@@ -180,11 +186,41 @@ router.post('/requests/:id/reject', adminAuth, async (req, res) => {
 router.post('/requests/:id/block', adminAuth, async (req, res) => {
     const { id } = req.params;
     try {
-        // da fare 
+        const [result] = await pool.query(
+            `UPDATE registration_requests
+             SET status = 'block', processed_at = NOW()
+             WHERE id = ?`,
+            [id]
+        );
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Richiesta non trovata.');
+        }
+        res.redirect('/admin/requests');
     } catch (err) {
         console.error('Errore in POST /admin/requests/:id/block:', err);
         res.status(500).send('Errore interno del server.');
     }
 });
+
+
+router.post('/requests/:id/sblock', adminAuth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [result] = await pool.query(
+            `UPDATE registration_requests
+             SET status = 'approved', processed_at = NOW()
+             WHERE id = ?`,
+            [id]
+        );
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Richiesta non trovata.');
+        }
+        res.redirect('/admin/requests');
+    } catch (err) {
+        console.error('Errore in POST /admin/requests/:id/block:', err);
+        res.status(500).send('Errore interno del server.');
+    }
+});
+
 
 module.exports = router;

@@ -2,9 +2,12 @@
 const express = require('express');
 const bcrypt  = require('bcrypt');
 const pool    = require('../db');         // vedi nota su db.js
+const jwt     = require('jsonwebtoken');
+
 
 const SALT_ROUNDS = 10;
-
+const ACCESS_TOKEN_SECRET  = process.env.ACCESS_TOKEN_SECRET;
+const ACCESS_TOKEN_EXPIRES = '24h'; 
 const router = express.Router();
 
 // chiami facendo /auth/register-shool
@@ -67,5 +70,59 @@ router.post('/register-school', async (req, res) => {
         conn.release();
     }
 });
+
+router.post('/token', async (req, res) => {
+    const { username, password } = req.body;
+
+    // Validazione minima
+    if (!username || !password ) {
+        return res
+            .status(400)
+            .send('Campi obbligatori mancanti: username, password.');
+    }
+
+    let conn;
+    try {
+        // Recupera utente da DB
+        conn = await pool.getConnection();
+        const [rows] = await conn.query(
+            'SELECT id, username, password_hash, ruolo, scuola_id FROM utenti WHERE username = ?',
+            [username]
+        );
+        if (rows.length === 0) {
+            return res.status(401).send('Credenziali non valide. 1 ');
+        }
+        const user = rows[0];
+
+        // Verifica password
+        const match = await bcrypt.compare(password, user.password_hash);
+        if (!match) {
+            return res.status(401).send('Credenziali non valide. 2 ');
+        }
+
+        //  Genera JWT
+        const payload = {
+            sub: user.id,
+            ruolo: user.ruolo,
+            scuola_id: user.scuola_id
+        };
+        const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+            expiresIn: ACCESS_TOKEN_EXPIRES
+        });
+
+        //  Ritorna il token
+        return res.json({ accessToken });
+
+    } catch (err) {
+        console.error('Errore in POST /auth/token:', err);
+        return res.status(500).send('Errore interno del server.');
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
+
+
+
 
 module.exports = router;
