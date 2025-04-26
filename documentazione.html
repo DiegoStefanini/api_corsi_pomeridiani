@@ -34,7 +34,19 @@
 
     <section id="auth">
       <h2>1. Autenticazione</h2>
-      <p>Ottieni un <code>access_token</code> JWT per ogni utente (amministratore, docente, studente).</p>
+      <p>
+        Bootstrap <br>
+
+        chiama /provision-school per inserire la tua scuola. <br>
+        
+        Bootstrapping Admin <br>
+        
+        chiama /auth/provision-admin per creare il primo amministratore associato a quella scuola. <br>
+        
+        Uso dell’API <br>
+        
+        L’admin logga con /auth/login, riceve access token → può chiamare POST /scuole (e poi POST /users) per creare nuove scuole e utenti. <br>
+      </p>
       <h3>Request</h3>
       <pre><code>POST /auth/token
 Content-Type: application/json

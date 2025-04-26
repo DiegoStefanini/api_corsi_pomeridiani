@@ -1,12 +1,22 @@
-CREATE DATABASE IF NOT EXISTS api_corsipomeridiani;
-USE api_corsipomeridiani;
-
 CREATE TABLE IF NOT EXISTS scuole (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     indirizzo TEXT,
     email_amministratore VARCHAR(255)
 );
+
+CREATE TABLE IF NOT EXISTS registration_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(255)           NOT NULL,
+  indirizzo TEXT,
+  email VARCHAR(255)          NOT NULL,
+  admin_username VARCHAR(100) NOT NULL,
+  admin_password VARCHAR(100) NOT NULL,
+  status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  processed_at TIMESTAMP NULL DEFAULT NULL
+);
+
 
 CREATE TABLE IF NOT EXISTS utenti (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,4 +62,12 @@ CREATE TABLE IF NOT EXISTS presenze (
     FOREIGN KEY (lezione_id) REFERENCES lezioni(id),
     FOREIGN KEY (studente_id) REFERENCES utenti(id),
     UNIQUE (lezione_id, studente_id)
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  utente_id INT NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  FOREIGN KEY (utente_id) REFERENCES utenti(id) ON DELETE CASCADE
 );
