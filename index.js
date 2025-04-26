@@ -13,11 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // static HTML
 app.get('/documentazione', (req, res) => {
-    res.sendFile(path.join(__dirname, 'documentazione.html'));
+    res.sendFile(path.join(__dirname, 'pages/documentazione.html'));
 });
 
 app.get('/register-school', (req, res) => {
-    res.sendFile(path.join(__dirname, 'registrazione.html'));
+    res.sendFile(path.join(__dirname, 'pages/registrazione.html'));
 });
 
 // monta i router

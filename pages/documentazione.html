@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>API Corsi Pomeridiani - Documentazione</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            margin: 0;
+            padding: 1em;
+            background: #1a252f;
+            font-size: 1.2em;
+        }
+        .menu, .submenu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .menu > li {
+            border-bottom: 1px solid #34495e;
+        }
+        .menu a,
+        .accordion {
+            display: block;
+            padding: 0.75em 1em;
+            color: inherit;
+            text-decoration: none;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .menu a:hover,
+        .accordion:hover {
+            background: #34495e;
+        }
+        .submenu {
+            display: none;
+            background: #34495e;
+        }
+        .submenu li a {
+            padding-left: 2em;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f4f4f9;
+            padding: 2em;
+        }
+        main section {
+            display: none;
+        }
+        main section.active {
+            display: block;
+        }
+        h2 {
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 0.3em;
+        }
+        pre {
+            background: #ecf0f1;
+            padding: 1em;
+            overflow-x: auto;
+        }
+        code {
+            background: #ecf0f1;
+            padding: 0.2em 0.4em;
+        }
+        footer {
+            text-align: center;
+            padding: 1em;
+            background: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2>Menu</h2>
+        <ul class="menu">
+            <li><a href="#intro">Home</a></li>
+            <li>
+                <button class="accordion">Endpoints ▾</button>
+                <ul class="submenu">
+                    <li><a href="#login">Login</a></li>
+                    <li><a href="#create-users">Creazione Utenti</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="content">
+        <main>
+            <section id="intro">
+                <h2>Introduzione</h2>
+                <p>Benvenuto nella documentazione dell'API per la gestione di corsi pomeridiani nelle scuole. Con questa API puoi:</p>
+                <ul>
+                    <li>Inviare richieste di registrazione per nuove scuole</li>
+                    <li>Autenticare utenti con JWT</li>
+                    <li>Gestire le richieste (approvazione, rifiuto, blocco)</li>
+                    <li>Creare utenti (amministratori, docenti, studenti)</li>
+                    <li>Gestire corsi, lezioni, iscrizioni e presenze</li>
+                </ul>
+            </section>
+
+          
+            <section id="login">
+                <h2>Login</h2>
+                <p><strong>POST</strong> <code>/auth/token</code>: autentica un utente e restituisce un JWT (<code>accessToken</code>).</p>
+                <pre><code>{
+  "username": "admin_x",
+  "password": "password123"
+}</code></pre>
+            </section>
+
+            <section id="create-users">
+                <h2>Creazione Utenti</h2>
+                <p>Protetto da JWT (<code>Authorization: Bearer &lt;token&gt;</code>) e RBAC (<code>authorize('amministratore')</code>).</p>
+                <p><strong>POST</strong> <code>/users</code>: crea docente, studente o amministratore per la scuola dell'utente loggato.</p>
+                <pre><code>{
+  "username": "docente1",
+  "password": "pwdDocente",
+  "ruolo": "docente"
+}</code></pre>
+            </section>
+        </main>
+        <footer>
+            <p>By Diego Stefanini, Andrea Romboli, Matteo Balinzo </p>
+            <p>&copy;   <a href="https://github.com/DiegoStefanini/api_corsi_pomeridiani/" target="_blank" rel="noopener">
+              https://github.com/DiegoStefanini/api_corsi_pomeridiani/
+          </a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Sidebar accordion
+        document.querySelectorAll('.accordion').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const submenu = btn.nextElementSibling;
+                submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        // Show only the clicked section
+        const sections = document.querySelectorAll('main section');
+        function showSection(id) {
+            sections.forEach(sec => {
+                sec.classList.toggle('active', sec.id === id);
+            });
+        }
+
+        // Menu link clicks
+        document.querySelectorAll('.menu a, .submenu a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const target = link.getAttribute('href').substring(1);
+                showSection(target);
+            });
+        });
+
+        // On load, show intro or hash
+        window.addEventListener('load', () => {
+            const hash = location.hash.substring(1);
+            showSection(hash || 'intro');
+        });
+    </script>
+</body>
+</html>
