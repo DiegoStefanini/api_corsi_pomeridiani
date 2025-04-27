@@ -95,6 +95,11 @@
                 <ul class="submenu">
                     <li><a href="#login">Login</a></li>
                     <li><a href="#create-users">Creazione Utenti</a></li>
+                    <li><a href="#gestione-corsi">Gestione Corsi</a></li>
+                    <li><a href="#gestione-lezioni">Gestione Lezioni</a></li>
+                    <li><a href="#gestione-iscrizioni">Gestione Iscrizioni</a></li>
+                    <li><a href="#gestione-presenze">Gestione Presenze</a></li>
+                    <li><a href="#assenze">Comunicazione Assenze</a></li>
                 </ul>
             </li>
         </ul>
@@ -107,13 +112,12 @@
                 <ul>
                     <li>Inviare richieste di registrazione per nuove scuole</li>
                     <li>Autenticare utenti con JWT</li>
-                    <li>Gestire le richieste (approvazione, rifiuto, blocco)</li>
-                    <li>Creare utenti (amministratori, docenti, studenti)</li>
                     <li>Gestire corsi, lezioni, iscrizioni e presenze</li>
+                    <li>Registrare assenze e presenze</li>
+                    <li>Controllare i log delle attività scolastiche</li>
                 </ul>
             </section>
 
-          
             <section id="login">
                 <h2>Login</h2>
                 <p><strong>POST</strong> <code>/auth/token</code>: autentica un utente e restituisce un JWT (<code>accessToken</code>).</p>
@@ -125,20 +129,50 @@
 
             <section id="create-users">
                 <h2>Creazione Utenti</h2>
-                <p>Protetto da JWT (<code>Authorization: Bearer &lt;token&gt;</code>) e RBAC (<code>authorize('amministratore')</code>).</p>
-                <p><strong>POST</strong> <code>/users</code>: crea docente, studente o amministratore per la scuola dell'utente loggato.</p>
+                <p>Protetto da JWT e autorizzazione (<code>amministratore</code>).</p>
+                <p><strong>POST</strong> <code>/users</code>: crea un nuovo utente (docente o studente).</p>
                 <pre><code>{
   "username": "docente1",
   "password": "pwdDocente",
   "ruolo": "docente"
 }</code></pre>
             </section>
+
+            <section id="gestione-corsi">
+                <h2>Gestione Corsi</h2>
+                <p><strong>POST</strong> <code>/corsi</code>: Crea un nuovo corso.</p>
+                <p><strong>PUT</strong> <code>/corsi/:id/docente</code>: Assegna un docente a un corso esistente.</p>
+                <p><strong>GET</strong> <code>/corsi</code>: Elenco dei corsi disponibili nella scuola.</p>
+            </section>
+
+            <section id="gestione-lezioni">
+                <h2>Gestione Lezioni</h2>
+                <p><strong>POST</strong> <code>/lezioni</code>: Crea una nuova lezione per un corso assegnato.</p>
+                <p><strong>GET</strong> <code>/lezioni/:corso_id</code>: Visualizza le lezioni di un corso.</p>
+                <p><strong>PUT</strong> <code>/lezioni/:id</code>: Modifica una lezione esistente.</p>
+                <p><strong>DELETE</strong> <code>/lezioni/:id</code>: Elimina una lezione.</p>
+            </section>
+
+            <section id="gestione-iscrizioni">
+                <h2>Gestione Iscrizioni</h2>
+                <p><strong>GET</strong> <code>/corsi</code>: Visualizza tutti i corsi disponibili.</p>
+                <p><strong>POST</strong> <code>/iscrizioni</code>: Iscrive lo studente ad un corso.</p>
+                <p><strong>GET</strong> <code>/iscrizioni</code>: Visualizza corsi a cui lo studente è iscritto.</p>
+            </section>
+
+            <section id="gestione-presenze">
+                <h2>Gestione Presenze</h2>
+                <p><strong>POST</strong> <code>/presenze</code>: Registra la presenza o assenza di uno studente a una lezione.</p>
+            </section>
+
+            <section id="assenze">
+                <h2>Comunicazione Assenze</h2>
+                <p><strong>POST</strong> <code>/assenze</code>: Lo studente comunica l'assenza futura ad una lezione.</p>
+            </section>
         </main>
         <footer>
-            <p>By Diego Stefanini, Andrea Romboli, Matteo Balinzo </p>
-            <p>&copy;   <a href="https://github.com/DiegoStefanini/api_corsi_pomeridiani/" target="_blank" rel="noopener">
-              https://github.com/DiegoStefanini/api_corsi_pomeridiani/
-          </a></p>
+            <p>Diego Stefanini, Andrea Romboli, Matteo Balinzo</p>
+            <p>&copy; <a href="https://github.com/DiegoStefanini/api_corsi_pomeridiani/" target="_blank" rel="noopener">https://github.com/DiegoStefanini/api_corsi_pomeridiani/</a></p>
         </footer>
     </div>
 

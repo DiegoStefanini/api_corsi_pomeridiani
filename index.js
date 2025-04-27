@@ -16,7 +16,7 @@ app.get('/documentazione', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages/documentazione.html'));
 });
 
-app.get('/register-school', (req, res) => {
+app.get('/registra-scuola', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages/registrazione.html'));
 });
 
