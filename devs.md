@@ -1,3 +1,23 @@
+## 🛠️ Stato dei lavori
+Funzionalità | Stato
+Registrazione e approvazione scuole | ✅ Completato
+Login e JWT | ✅ Completato
+Creazione utenti | ✅ Completato
+Creazione corsi e assegnazione docenti | 🟡 Da completare
+Gestione lezioni | 🟡 Da completare
+Iscrizione studenti | 🟡 Da completare
+Gestione presenze | 🔲 In sviluppo
+Log azioni locali per scuola | 🔲 Da implementare
+Webhook Discord logging globale | 🔲 Da implementare
+
+## 🚨 Problemi o cose da risolvere
+Area | Problema | Soluzione prevista
+Sicurezza API | Accesso admin frontend migliorabile | Protezione con login a token anche lato admin
+Log eventi | Log utente locali e webhook non ancora implementati | Creare servizio logging centralizzato
+Rate Limit | Nessun rate-limit su login | Aggiungere express-rate-limit
+Validazione dati | Base ma migliorabile | Introdurre express-validator
+CORS | Attualmente molto permissivo | Limitare ai domini autorizzati
+
 ## 🤝 Workflow di collaborazione (Git & GitHub)
 
 Per lavorare insieme senza conflitti o perdita di codice, seguiamo questo flusso di lavoro:
