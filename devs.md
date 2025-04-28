@@ -20,6 +20,9 @@ Rate Limit      |  Nessun rate-limit   |    Aggiungere express-rate-limit
 Valida. dati    | Base ma migliorabile |    Introdurre express-validator
 CORS            |   Molto permissivo   |    Limitare ai domini autorizzati
 ```
+## Divisione lavori
+
+
 ## 🤝 Workflow di collaborazione (Git & GitHub)
 
 Per lavorare insieme senza conflitti o perdita di codice, seguiamo questo flusso di lavoro:
