@@ -40,13 +40,6 @@ CREATE TABLE `presenze` (
 
 
 
-CREATE TABLE `refresh_tokens` (
-  `id` int(11) NOT NULL,
-  `utente_id` int(11) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `expires_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 
 CREATE TABLE `registration_requests` (
@@ -107,10 +100,6 @@ ALTER TABLE `presenze`
   ADD KEY `studente_id` (`studente_id`);
 
 
-ALTER TABLE `refresh_tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `utente_id` (`utente_id`);
-
 
 ALTER TABLE `registration_requests`
   ADD PRIMARY KEY (`id`),
@@ -144,8 +133,6 @@ ALTER TABLE `presenze`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 
-ALTER TABLE `refresh_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 
 ALTER TABLE `registration_requests`
@@ -173,9 +160,6 @@ ALTER TABLE `presenze`
   ADD CONSTRAINT `presenze_ibfk_1` FOREIGN KEY (`lezione_id`) REFERENCES `lezioni` (`id`),
   ADD CONSTRAINT `presenze_ibfk_2` FOREIGN KEY (`studente_id`) REFERENCES `utenti` (`id`);
 
-
-ALTER TABLE `refresh_tokens`
-  ADD CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`utente_id`) REFERENCES `utenti` (`id`) ON DELETE CASCADE;
 
 
 ALTER TABLE `scuole`
