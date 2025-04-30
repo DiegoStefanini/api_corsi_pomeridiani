@@ -28,14 +28,10 @@ router.post('/', authenticateToken, authorize('amministratore'),
 
         // validazione di base
         if (!username || !password || !ruolo) {
-            return res
-                .status(400)
-                .send('Campi mancanti: username, password, ruolo.');
+            return res.status(400).send('Campi mancanti: username, password, ruolo.');
         }
         if (!allowedRoles.includes(ruolo)) {
-            return res
-                .status(400)
-                .send('Ruolo non valido, scegli "docente" o "studente" o "amministratore.');
+            return res.status(400).send('Ruolo non valido, scegli "docente" o "studente" o "amministratore.');
         }
 
         const scuola_id = req.user.scuola_id; // dal JWT
