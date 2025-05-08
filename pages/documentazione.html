@@ -155,9 +155,88 @@
 
             <section id="gestione-iscrizioni">
                 <h2>Gestione Iscrizioni</h2>
-                <p><strong>GET</strong> <code>/corsi</code>: Visualizza tutti i corsi disponibili.</p>
-                <p><strong>POST</strong> <code>/iscrizioni</code>: Iscrive lo studente ad un corso.</p>
-                <p><strong>GET</strong> <code>/iscrizioni</code>: Visualizza corsi a cui lo studente è iscritto.</p>
+                <p>Questi endpoint gestiscono le iscrizioni degli studenti ai corsi.</p>
+            
+                <h3>Visualizza tutti i corsi con numero di iscritti</h3>
+                <p><strong>GET</strong> <code>/iscrizioni</code></p>
+                <p>Recupera l'elenco di tutti i corsi disponibili con il conteggio degli studenti iscritti a ciascuno. Richiede autenticazione.</p>
+                <p><strong>Risposta di successo (esempio):</strong></p>
+                <pre><code>[
+              {
+                "corso_id": 1,
+                "nome_corso": "Matematica Avanzata",
+                "descrizione_corso": "Corso avanzato di matematica.",
+                "numero_iscritti": 15
+              },
+              {
+                "corso_id": 2,
+                "nome_corso": "Inglese Intermedio",
+                "descrizione_corso": "Corso di inglese di livello intermedio.",
+                "numero_iscritti": 22
+              }
+            ]</code></pre>
+            
+                <h3>Visualizza gli iscritti a un corso specifico</h3>
+                <p><strong>GET</strong> <code>/iscrizioni/:id_corso</code></p>
+                <p>Recupera l'elenco degli studenti iscritti al corso con l'ID specificato. Richiede autenticazione.</p>
+                <p><strong>Parametri URL:</strong></p>
+                <ul>
+                    <li><code>id_corso</code>: L'ID del corso di cui visualizzare gli iscritti.</li>
+                </ul>
+                <p><strong>Risposta di successo (esempio):</strong></p>
+                <pre><code>[
+              {
+                "studente_id": 101,
+                "nome_studente": "Alice",
+                "cognome_studente": "Rossi"
+              },
+              {
+                "studente_id": 102,
+                "nome_studente": "Bob",
+                "cognome_studente": "Bianchi"
+              }
+            ]</code></pre>
+            
+                <h3>Iscrivi uno studente a un corso</h3>
+                <p><strong>POST</strong> <code>/iscrizioni</code></p>
+                <p>Iscrive lo studente autenticato a un corso specifico. Richiede autenticazione (ruolo 'studente').</p>
+                <p><strong>Body della richiesta (application/json):</strong></p>
+                <pre><code>{
+              "corso_id": 123
+            }</code></pre>
+                <p><strong>Risposta di successo (201 Created):</strong></p>
+                <pre><code>{
+              "message": "Iscrizione al corso avvenuta con successo."
+            }</code></pre>
+            
+                <h3>Cancella l'iscrizione di uno studente a un corso</h3>
+                <p><strong>DELETE</strong> <code>/iscrizioni</code></p>
+                <p>Permette allo studente autenticato di cancellare la propria iscrizione a un corso specifico. Richiede autenticazione (ruolo 'studente').</p>
+                <p><strong>Body della richiesta (application/json):</strong></p>
+                <pre><code>{
+              "corso_id": 123
+            }</code></pre>
+                <p><strong>Risposta di successo (200 OK):</strong></p>
+                <pre><code>{
+              "message": "Disiscrizione dal corso avvenuta con successo."
+            }</code></pre>
+            
+                <h3>Visualizza i corsi a cui lo studente è iscritto</h3>
+                <p><strong>GET</strong> <code>/iscrizioni/mie-iscrizioni</code></p>
+                <p>Recupera l'elenco dei corsi a cui lo studente autenticato è attualmente iscritto. Richiede autenticazione (ruolo 'studente').</p>
+                <p><strong>Risposta di successo (esempio):</strong></p>
+                <pre><code>[
+              {
+                "corso_id": 1,
+                "nome_corso": "Matematica Avanzata",
+                "descrizione_corso": "Corso avanzato di matematica."
+              },
+              {
+                "corso_id": 3,
+                "nome_corso": "Storia dell'Arte",
+                "descrizione_corso": "Un viaggio nella storia dell'arte."
+              }
+            ]</code></pre>
             </section>
 
             <section id="gestione-presenze">
