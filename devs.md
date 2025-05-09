@@ -29,8 +29,6 @@ iscrizioni.js	Iscrizione studente ai corsi, visualizzare iscrizioni    Matteo
 frequenza.js	Registrazione presenza a lezione + Comunicazione assenze programmate    Matteo
 auth.js	Registrazione scuole, Login, Refresh token	Diego
 logs.js	Visualizzazione log delle azioni utenti e webhook Discord	Diego
-
-
 ```
 
 ## 🤝 Workflow di collaborazione (Git & GitHub)
