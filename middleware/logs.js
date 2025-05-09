@@ -34,10 +34,16 @@ function log() {
         if (DISCORD_WEBHOOK_URL != 0) {
             try {
                 await axios.post(DISCORD_WEBHOOK_URL, {
-                    content: `📥 **${method} ${url}**
-👤 Utente: ${user}
-🕒 ${timestamp}
-📦 Body: \`\`\`json\n${body}\n\`\`\``
+                    embeds: [
+                        {
+                            title: "📄 Log Server",
+                            description: `**Metodo:** \`${method}\`\n**Endpoint:** \`${url}\`\n**Utente:** \`${user}\`\n**Orario:** \`${timestamp}\`\n\n📦 **Body:**\n\`\`\`json\n${body}\n\`\`\``,
+                            color: 0x0000ff, // blu
+                            footer: {
+                                text: "LOG"
+                            }
+                        }
+                    ]
                 });
             } catch (err) {
                 console.error('Errore invio webhook Discord:', err.message);

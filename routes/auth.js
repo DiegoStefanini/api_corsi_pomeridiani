@@ -71,7 +71,7 @@ router.post('/register-school', async (req, res) => {
     }
 });
 
-router.post('/token', async (req, res) => {
+router.post('/token', logs(), async (req, res) => {
     const { username, password } = req.body;
 
     // Validazione minima
