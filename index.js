@@ -7,7 +7,7 @@ const authRoutes        = require('./routes/auth');
 const adminRequests     = require('./routes/adminRequests');
 const userRoutes        = require('./routes/users');
 const iscrizioniRoutes        = require('./routes/iscrizioni');
-const corsiRoutes        = require('./routes/iscrizioni');
+const corsiRoutes        = require('./routes/corsi');
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminRequests);
 app.use('/users', userRoutes);   // <— qui monti il nuovo router
 app.use('/iscrizioni', iscrizioniRoutes);   // <— qui monti il nuovo router
-app.use('/corsi', iscrizioniRoutes);   // <— qui monti il nuovo router
+app.use('/corsi', corsiRoutes);   // <— qui monti il nuovo router
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

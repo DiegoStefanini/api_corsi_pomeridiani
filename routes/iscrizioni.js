@@ -19,82 +19,103 @@ const router = express.Router();
  * }
  */
 router.post('/', authenticateToken, authorize('studente'), async (req, res) => {
-    const { corso_id, studente_id } = req.body;
-    const scuola_id = req.user.scuola_id;
-    const requestingUserId = req.user.sub;
+    console.log(req);
+    const { corso_id } = req.body; // Ora prendiamo solo corso_id dal corpo
+    const scuola_id_utente = req.user.scuola_id; // ID scuola dell'utente autenticato (dal token JWT)
+    const studente_id_autenticato = req.user.id; // ID dell'utente studente autenticato (dal token JWT)
 
-    console.log('Richiesta iscrizione ricevuta:', { corso_id, studente_id, scuola_id });
+    console.log('Richiesta iscrizione ricevuta:', { corso_id, studente_id_autenticato, scuola_id_utente });
 
-    // Validazione Input
+    // --- Validazione Input Base ---
     if (!corso_id || isNaN(parseInt(corso_id))) {
         return res.status(400).json({ message: 'ID del corso mancante o non valido.' });
-    }
-    
-    // Verifica che l'ID studente nel body corrisponda all'utente autenticato
-    if (studente_id !== requestingUserId) {
-        return res.status(403).json({ message: 'Non puoi iscrivere altri studenti.' });
     }
 
     let conn;
     try {
         conn = await pool.getConnection();
-        console.log('Connessione al DB acquisita');
+        console.log('Connessione al DB acquisita per POST /iscrizioni ');
+        await conn.beginTransaction();
 
-        // Verifica Esistenza e Appartenenza Corso
+        // --- Verifica Esistenza e Appartenenza Corso ---
         const [corsoRows] = await conn.query(
             'SELECT id, scuola_id FROM corsi WHERE id = ?',
-            [corso_id]
+            [parseInt(corso_id)]
         );
-
         console.log('Risultato query verifica corso:', corsoRows);
 
         if (corsoRows.length === 0) {
+            await conn.rollback();
             return res.status(404).json({ message: 'Corso non trovato.' });
         }
-
-        if (corsoRows[0].scuola_id !== scuola_id) {
+        if (corsoRows[0].scuola_id !== scuola_id_utente) {
+            await conn.rollback();
             return res.status(403).json({ message: 'Non puoi iscriverti a corsi di altre scuole.' });
         }
 
-        // Verifica esistenza studente
+        // --- Verifica Esistenza e Ruolo Studente (OPZIONALE ma buona pratica) ---
+        // Sebbene authorize('studente') dovrebbe aver già garantito il ruolo,
+        // una verifica aggiuntiva sull'esistenza dell'utente con quell'ID e ruolo
+        // nella scuola corretta può essere una sicurezza in più.
         const [studenteRows] = await conn.query(
-            'SELECT id FROM studenti WHERE id = ? AND scuola_id = ?',
-            [studente_id, scuola_id]
+            'SELECT id, ruolo FROM utenti WHERE id = ? AND scuola_id = ? AND ruolo = \'studente\'',
+            [studente_id_autenticato, scuola_id_utente]
         );
+        console.log('Risultato query verifica utente (studente):', studenteRows);
 
         if (studenteRows.length === 0) {
-            return res.status(404).json({ message: 'Studente non trovato nella tua scuola.' });
+            // Questo errore indica un'incoerenza: l'utente autenticato con ruolo studente
+            // non è stato trovato nel DB come studente di quella scuola.
+            // Potrebbe indicare un problema con i dati o un token obsoleto.
+            await conn.rollback();
+            return res.status(404).json({ message: 'Utente studente non trovato o non valido per questa operazione.' });
         }
 
-        // Tentativo di Inserimento Iscrizione
+        // --- Tentativo di Inserimento Iscrizione ---
+        // Usiamo studente_id_autenticato per studente_id.
         const [result] = await conn.query(
             'INSERT INTO iscrizioni (studente_id, corso_id) VALUES (?, ?)',
-            [studente_id, corso_id]
+            [studente_id_autenticato, parseInt(corso_id)]
         );
+        console.log('Risultato inserimento iscrizione:', result);
 
-        console.log('Risultato inserimento:', result);
-
-        res.status(201).json({ message: 'Iscrizione al corso avvenuta con successo.' });
+        await conn.commit();
+        res.status(201).json({
+            message: 'Iscrizione al corso avvenuta con successo.',
+            iscrizione: {
+                id: result.insertId,
+                studente_id: studente_id_autenticato,
+                corso_id: parseInt(corso_id)
+            }
+        });
 
     } catch (err) {
+        if (conn) await conn.rollback();
+
         console.error('Errore dettagliato in POST /iscrizioni:', {
             message: err.message,
             code: err.code,
             sqlState: err.sqlState,
             sqlMessage: err.sqlMessage,
-            stack: err.stack
         });
 
-        if (err.code === 'ER_DUP_ENTRY' || err.sqlState === '23000') {
-            return res.status(409).json({ message: 'Lo studente è già iscritto a questo corso.' });
+        if (err.code === 'ER_DUP_ENTRY' || (err.sqlState && err.sqlState.startsWith('23'))) {
+            return res.status(409).json({ message: 'Risulti già iscritto a questo corso.' });
+        }
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            // Questo errore potrebbe ancora capitare se, per qualche motivo, il corso_id
+            // passasse le prime validazioni ma non esistesse al momento dell'insert (raro con le transazioni).
+            return res.status(400).json({ message: 'ID corso non valido (riferimento mancante).' });
         }
 
-        res.status(500).json({ 
+        res.status(500).json({
             message: 'Errore interno del server durante l\'iscrizione.',
-            error: err.message
         });
     } finally {
-        if (conn) await conn.release();
+        if (conn) {
+            console.log('Rilascio connessione DB per POST /iscrizioni');
+            await conn.release();
+        }
     }
 });
 /**
@@ -103,7 +124,7 @@ router.post('/', authenticateToken, authorize('studente'), async (req, res) => {
  * Richiede autenticazione (ma non specifica il ruolo, quindi accessibile a tutti gli utenti autenticati).
  * Se vuoi limitare l'accesso, aggiungi il middleware `authorize`.
  */
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, authorize('studente', 'amministratore'), async (req, res) => {
     console.log("Eseguendo GET /iscrizioni");
     try {
         const [rows] = await pool.query(`
@@ -131,7 +152,7 @@ router.get('/', authenticateToken, async (req, res) => {
  * Richiede autenticazione (ma non specifica il ruolo, quindi accessibile a tutti gli utenti autenticati).
  * Se vuoi limitare l'accesso, aggiungi il middleware `authorize`.
  */
-router.get('/:corso_id', authenticateToken, async (req, res) => {
+router.get('/:corso_id', authenticateToken,authorize('studente', 'amministratore'), async (req, res) => {
     const corsoId = req.params.corso_id;
 
     // Validazione del parametro
@@ -167,7 +188,7 @@ router.get('/:corso_id', authenticateToken, async (req, res) => {
  * Protetto: authenticateToken + authorize('studente')
  */
 router.get('/mie-iscrizioni', authenticateToken, authorize('studente'), async (req, res) => {
-    const studenteId = req.user.sub;
+    const studenteId = req.user.id;
 
     try {
         const [rows] = await pool.query(`
@@ -199,7 +220,7 @@ router.get('/mie-iscrizioni', authenticateToken, authorize('studente'), async (r
  */
 router.delete('/', authenticateToken, authorize('studente'), async (req, res) => {
     const { corso_id } = req.body;
-    const studente_id = req.user.sub;
+    const studente_id = req.user.id;
 
     if (!corso_id || typeof corso_id !== 'number') {
         return res.status(400).json({ error: 'ID del corso mancante o non valido' });
