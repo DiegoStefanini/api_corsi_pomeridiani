@@ -25,4 +25,5 @@ npm install bcrypt
 npm install dotenv
 npm install jsonwebtoken
 npm install mysql2
+npm install axios 
 ```

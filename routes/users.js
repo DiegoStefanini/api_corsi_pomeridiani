@@ -7,6 +7,7 @@ const {
     authorize
 } = require('../middleware/checkAuth');  // JWT + RBAC
 
+const log = require('../middleware/logs')
 const SALT_ROUNDS = 10;
 const router      = express.Router();
 
@@ -21,7 +22,7 @@ const router      = express.Router();
  *   ruolo: 'docente' | 'studente'
  * }
  */
-router.post('/', authenticateToken, authorize('amministratore'),
+router.post('/', authenticateToken, authorize('amministratore'), log(),
     async (req, res) => {
         const { username, password, ruolo } = req.body;
         const allowedRoles = ['docente', 'studente', 'amministratore'];

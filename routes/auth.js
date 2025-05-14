@@ -9,7 +9,7 @@ const SALT_ROUNDS = 10;
 const ACCESS_TOKEN_SECRET  = process.env.ACCESS_TOKEN_SECRET;
 const ACCESS_TOKEN_EXPIRES = '24h'; 
 const router = express.Router();
-
+const log = require('../middleware/logs');
 // chiami facendo /auth/register-shool
 router.post('/register-school', async (req, res) => {
     const {
@@ -71,7 +71,7 @@ router.post('/register-school', async (req, res) => {
     }
 });
 
-router.post('/token', async (req, res) => {
+router.post('/token', log(), async (req, res) => {
     const { username, password } = req.body;
 
     // Validazione minima
