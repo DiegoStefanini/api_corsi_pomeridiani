@@ -6,6 +6,7 @@ const {
     authorize
 } = require('../middleware/checkAuth'); // Assicurati che il percorso sia corretto
 
+const log = require('../middleware/logs')
 const router = express.Router();
 
 /**
@@ -18,7 +19,7 @@ const router = express.Router();
  * corso_id: number // L'ID del corso a cui iscriversi
  * }
  */
-router.post('/', authenticateToken, authorize('studente'), async (req, res) => {
+router.post('/', authenticateToken, authorize('studente'), log(), async (req, res) => {
     console.log(req);
     const { corso_id } = req.body; // Ora prendiamo solo corso_id dal corpo
     const scuola_id_utente = req.user.scuola_id; // ID scuola dell'utente autenticato (dal token JWT)
@@ -218,7 +219,7 @@ router.get('/mie-iscrizioni', authenticateToken, authorize('studente'), async (r
  * corso_id: number // L'ID del corso da cui disiscriversi
  * }
  */
-router.delete('/', authenticateToken, authorize('studente'), async (req, res) => {
+router.delete('/', authenticateToken, authorize('studente'),log(), async (req, res) => {
     const { corso_id } = req.body;
     const studente_id = req.user.id;
 

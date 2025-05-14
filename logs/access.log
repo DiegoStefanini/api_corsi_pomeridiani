@@ -1,0 +1,9 @@
+[2025-05-09T09:06:12.034Z] POST /iscrizioni - undefined (scuola_id: 8) - body: {"corsi_id":1}
+[2025-05-09T09:06:20.359Z] POST /iscrizioni - undefined (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:08:14.414Z] DELETE /iscrizioni - undefined (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:08:31.159Z] POST /iscrizioni - undefined (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:15:10.615Z] DELETE /iscrizioni - undefined (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:15:18.421Z] POST /iscrizioni - undefined (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:19:41.679Z] DELETE /iscrizioni - 5 (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T09:19:49.329Z] POST /iscrizioni - 5 (scuola_id: 8) - body: {"corso_id":1}
+[2025-05-09T13:44:23.202Z] POST /auth/token - Utente non autenticato - body: {"username":"matteo-balinzo","password":"scuola123"}

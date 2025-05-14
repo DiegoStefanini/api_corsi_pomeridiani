@@ -13,7 +13,7 @@ function log() {
         const method = req.method;
         const url = req.originalUrl;
         const user = req.user
-            ? `${req.user.username} (scuola_id: ${req.user.scuola_id})`
+            ? `${req.user.id} (scuola_id: ${req.user.scuola_id})`
             : 'Utente non autenticato';
         const body = req.body && Object.keys(req.body).length > 0
             ? JSON.stringify(req.body)
