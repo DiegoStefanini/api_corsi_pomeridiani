@@ -3,6 +3,7 @@ const express = require('express');
 const adminAuth = require('../middleware/adminAuth');
 const pool      = require('../db');
 
+const log = require('../middleware/logs');
 
 
 const router = express.Router();
@@ -106,7 +107,7 @@ router.get('/requests', adminAuth, async (req, res) => {
  * POST /admin/requests/:id/approve
  * Approva la richiesta, crea scuola + admin e torna alla lista.
  */
-router.post('/requests/:id/approve', adminAuth, async (req, res) => {
+router.post('/requests/:id/approve', adminAuth, log(), async (req, res) => {
     const { id } = req.params;
     const conn = await pool.getConnection();
     try {
@@ -163,7 +164,7 @@ router.post('/requests/:id/approve', adminAuth, async (req, res) => {
  * POST /admin/requests/:id/reject
  * Rifiuta la richiesta e torna alla lista.
  */
-router.post('/requests/:id/reject', adminAuth, async (req, res) => {
+router.post('/requests/:id/reject', adminAuth, log(), async (req, res) => {
     const { id } = req.params;
     try {
         const [result] = await pool.query(
@@ -183,7 +184,7 @@ router.post('/requests/:id/reject', adminAuth, async (req, res) => {
     }
 });
 
-router.post('/requests/:id/block', adminAuth, async (req, res) => {
+router.post('/requests/:id/block', adminAuth, log(), async (req, res) => {
     const { id } = req.params;
     try {
         const [result] = await pool.query(
@@ -203,7 +204,7 @@ router.post('/requests/:id/block', adminAuth, async (req, res) => {
 });
 
 
-router.post('/requests/:id/sblock', adminAuth, async (req, res) => {
+router.post('/requests/:id/sblock', adminAuth, log(), async (req, res) => {
     const { id } = req.params;
     try {
         const [result] = await pool.query(
