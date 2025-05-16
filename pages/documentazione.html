@@ -140,42 +140,154 @@
 
             <section id="gestione-corsi">
                 <h2>Gestione Corsi</h2>
-                <p><strong>POST</strong> <code>/corsi</code>: Crea un nuovo corso.</p>
-                <p><strong>PUT</strong> <code>/corsi/:id/docente</code>: Assegna un docente a un corso esistente.</p>
-                <p><strong>GET</strong> <code>/corsi</code>: Elenco dei corsi disponibili nella scuola.</p>
+                <p>Questi endpoint gestiscono i corsi all'interno della scuola.</p>
+
+                <h3>Crea un nuovo corso</h3>
+                <p><strong>POST</strong> <code>/corsi</code>: Crea un nuovo corso. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+                <p>Prende 'titolo' e 'descrizione' dal body e ricava 'docente_id' e 'scuola_id' dal JWT.</p>
+                <pre><code>{
+    "titolo": "Nome del corso",
+    "descrizione": "Descrizione del corso"
+}</code></pre>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Corso creato con successo.",
+    "corso_id": 123
+}</code></pre>
+
+                <h3>Elenca i corsi della scuola</h3>
+                <p><strong>GET</strong> <code>/corsi</code>: Elenco dei corsi disponibili nella scuola dell'utente autenticato. Restituisce i nomi di scuola e docente anziché gli ID.</p>
+                <p>Risposta di successo (esempio):</p>
+                <pre><code>[
+  {
+    "id": 1,
+    "titolo": "Matematica Avanzata",
+    "descrizione": "Studio approfondito di analisi e algebra lineare",
+    "nome_scuola": "Nome della Scuola",
+    "nome_docente": "Username del Docente"
+  },
+  ...
+]</code></pre>
+
+                <h3>Ottieni un corso specifico</h3>
+                <p><strong>GET</strong> <code>/corsi/:id</code>: Restituisce un corso specifico per ID, con i nomi di scuola e docente. Richiede autenticazione.</p>
+                <p>Parametri URL:</p>
+                <ul>
+                    <li><code>id</code>: L'ID del corso da recuperare.</li>
+                </ul>
+                <p>Risposta di successo (esempio):</p>
+                <pre><code>{
+    "id": 1,
+    "titolo": "Matematica Avanzata",
+    "descrizione": "Studio approfondito di analisi e algebra lineare",
+    "nome_scuola": "Nome della Scuola",
+    "nome_docente": "Username del Docente"
+}</code></pre>
+
+                <h3>Elimina un corso</h3>
+                <p><strong>DELETE</strong> <code>/corsi/:id</code>: Elimina un corso specifico. Solo i docenti e gli amministratori possono eliminare corsi. Richiede autenticazione.</p>
+                <p>Parametri URL:</p>
+                <ul>
+                    <li><code>id</code>: L'ID del corso da eliminare.</li>
+                </ul>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Corso eliminato con successo."
+}</code></pre>
+
             </section>
 
             <section id="gestione-lezioni">
                 <h2>Gestione Lezioni</h2>
-                <p><strong>POST</strong> <code>/lezioni</code>: Crea una nuova lezione per un corso assegnato.</p>
-                <p><strong>GET</strong> <code>/lezioni/:corso_id</code>: Visualizza le lezioni di un corso.</p>
-                <p><strong>PUT</strong> <code>/lezioni/:id</code>: Modifica una lezione esistente.</p>
-                <p><strong>DELETE</strong> <code>/lezioni/:id</code>: Elimina una lezione.</p>
+                <p>Questi endpoint gestiscono le lezioni dei corsi.</p>
+
+                <h3>Crea una nuova lezione</h3>
+                <p><strong>POST</strong> <code>/lezioni</code>: Crea una nuova lezione per un corso. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+                <p>Prende 'corso_id', 'data' (YYYY-MM-DD), 'orario_inizio' (HH:MM:SS), 'orario_fine' (HH:MM:SS) e 'id_aula' dal body.</p>
+                <pre><code>{
+    "corso_id": 1,
+    "data": "2024-09-10",
+    "orario_inizio": "14:30:00",
+    "orario_fine": "16:30:00",
+    "id_aula": 5
+}</code></pre>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Lezione creata con successo.",
+    "lezione_id": 10
+}</code></pre>
+
+                <h3>Visualizza le lezioni di un corso</h3>
+                <p><strong>GET</strong> <code>/lezioni/:corsoId</code>: Visualizza le lezioni di un corso specifico, filtrate per la scuola dell'utente. Richiede autenticazione.</p>
+                <p>Parametri URL:</p>
+                <ul>
+                    <li><code>corsoId</code>: L'ID del corso di cui visualizzare le lezioni.</li>
+                </ul>
+                <p>Risposta di successo (esempio):</p>
+                <pre><code>[
+  {
+    "id": 201,
+    "corso_id": 1,
+    "data": "2024-09-10",
+    "orario_inizio": "14:30:00",
+    "orario_fine": "16:30:00",
+    "id_aula": 5
+  },
+  ...
+]</code></pre>
+
+                <h3>Elimina una lezione</h3>
+                <p><strong>DELETE</strong> <code>/lezioni/:id</code>: Elimina una lezione specifica. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+                <p>Parametri URL:</p>
+                <ul>
+                    <li><code>id</code>: L'ID della lezione da eliminare.</li>
+                </ul>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Lezione eliminata con successo."
+}</code></pre>
+
             </section>
 
             <section id="gestione-iscrizioni">
                 <h2>Gestione Iscrizioni</h2>
                 <p>Questi endpoint gestiscono le iscrizioni degli studenti ai corsi.</p>
-            
+
+                <h3>Iscrivi uno studente a un corso</h3>
+                <p><strong>POST</strong> <code>/iscrizioni</code>: Iscrive lo studente autenticato (ruolo 'studente') a un corso specifico. Lo studente può iscriversi solo ai corsi della propria scuola. Richiede autenticazione e autorizzazione per 'studente'.</p>
+                <p>Body della richiesta:</p>
+                <pre><code>{
+    "corso_id": 123 // L'ID del corso a cui iscriversi
+}</code></pre>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Iscrizione al corso avvenuta con successo.",
+    "iscrizione": {
+        "id": 456,
+        "studente_id": 789,
+        "corso_id": 123
+    }
+}</code></pre>
+
                 <h3>Visualizza tutti i corsi con numero di iscritti</h3>
                 <p><strong>GET</strong> <code>/iscrizioni</code></p>
                 <p>Recupera l'elenco di tutti i corsi disponibili con il conteggio degli studenti iscritti a ciascuno. Richiede autenticazione.</p>
                 <p><strong>Risposta di successo (esempio):</strong></p>
                 <pre><code>[
-              {
-                "corso_id": 1,
-                "nome_corso": "Matematica Avanzata",
-                "descrizione_corso": "Corso avanzato di matematica.",
-                "numero_iscritti": 15
-              },
-              {
-                "corso_id": 2,
-                "nome_corso": "Inglese Intermedio",
-                "descrizione_corso": "Corso di inglese di livello intermedio.",
-                "numero_iscritti": 22
-              }
-            ]</code></pre>
-            
+  {
+    "corso_id": 1,
+    "nome_corso": "Matematica Avanzata",
+    "descrizione_corso": "Corso avanzato di matematica.",
+    "numero_iscritti": 15
+  },
+  {
+    "corso_id": 2,
+    "nome_corso": "Inglese Intermedio",
+    "descrizione_corso": "Corso di inglese di livello intermedio.",
+    "numero_iscritti": 22
+  }
+]</code></pre>
+
                 <h3>Visualizza gli iscritti a un corso specifico</h3>
                 <p><strong>GET</strong> <code>/iscrizioni/:id_corso</code></p>
                 <p>Recupera l'elenco degli studenti iscritti al corso con l'ID specificato. Richiede autenticazione.</p>
@@ -185,68 +297,55 @@
                 </ul>
                 <p><strong>Risposta di successo (esempio):</strong></p>
                 <pre><code>[
-              {
-                "studente_id": 101,
-                "nome_studente": "Alice",
-                "cognome_studente": "Rossi"
-              },
-              {
-                "studente_id": 102,
-                "nome_studente": "Bob",
-                "cognome_studente": "Bianchi"
-              }
-            ]</code></pre>
-            
-                <h3>Iscrivi uno studente a un corso</h3>
-                <p><strong>POST</strong> <code>/iscrizioni</code></p>
-                <p>Iscrive lo studente autenticato a un corso specifico. Richiede autenticazione (ruolo 'studente').</p>
-                <p><strong>Body della richiesta (application/json):</strong></p>
-                <pre><code>{
-              "corso_id": 123
-            }</code></pre>
-                <p><strong>Risposta di successo (201 Created):</strong></p>
-                <pre><code>{
-              "message": "Iscrizione al corso avvenuta con successo."
-            }</code></pre>
-            
-                <h3>Cancella l'iscrizione di uno studente a un corso</h3>
-                <p><strong>DELETE</strong> <code>/iscrizioni</code></p>
-                <p>Permette allo studente autenticato di cancellare la propria iscrizione a un corso specifico. Richiede autenticazione (ruolo 'studente').</p>
-                <p><strong>Body della richiesta (application/json):</strong></p>
-                <pre><code>{
-              "corso_id": 123
-            }</code></pre>
-                <p><strong>Risposta di successo (200 OK):</strong></p>
-                <pre><code>{
-              "message": "Disiscrizione dal corso avvenuta con successo."
-            }</code></pre>
-            
-                <h3>Visualizza i corsi a cui lo studente è iscritto</h3>
+  {
+    "studente_id": 101,
+    "nome_studente": "Mario Rossi"
+  },
+  {
+    "studente_id": 102,
+    "nome_studente": "Luigi Verdi"
+  }
+]</code></pre>
+
+                <h3>Visualizza i corsi a cui è iscritto uno studente</h3>
                 <p><strong>GET</strong> <code>/iscrizioni/mie-iscrizioni</code></p>
-                <p>Recupera l'elenco dei corsi a cui lo studente autenticato è attualmente iscritto. Richiede autenticazione (ruolo 'studente').</p>
+                <p>Recupera l'elenco dei corsi a cui lo studente autenticato è attualmente iscritto. Richiede autenticazione e autorizzazione per 'studente'.</p>
                 <p><strong>Risposta di successo (esempio):</strong></p>
                 <pre><code>[
-              {
-                "corso_id": 1,
-                "nome_corso": "Matematica Avanzata",
-                "descrizione_corso": "Corso avanzato di matematica."
-              },
-              {
-                "corso_id": 3,
-                "nome_corso": "Storia dell'Arte",
-                "descrizione_corso": "Un viaggio nella storia dell'arte."
-              }
-            ]</code></pre>
+  {
+    "corso_id": 1,
+    "nome_corso": "Matematica Avanzata",
+    "descrizione_corso": "Corso avanzato di matematica."
+  },
+  {
+    "corso_id": 2,
+    "nome_corso": "Inglese Intermedio",
+    "descrizione_corso": "Corso di inglese di livello intermedio."
+  }
+]</code></pre>
+
+                <h3>Cancella l'iscrizione di uno studente a un corso</h3>
+                <p><strong>DELETE</strong> <code>/iscrizioni</code></p>
+                <p>Permette allo studente autenticato (ruolo 'studente') di cancellare la propria iscrizione a un corso specifico. Richiede autenticazione e autorizzazione per 'studente'.</p>
+                <p><strong>Body della richiesta:</strong></p>
+                <pre><code>{
+    "corso_id": 123 // L'ID del corso da cui disiscriversi
+}</code></pre>
+                <p><strong>Risposta di successo:</strong></p>
+                <pre><code>{
+    "message": "Disiscrizione dal corso avvenuta con successo."
+}</code></pre>
+
             </section>
 
             <section id="gestione-presenze">
                 <h2>Gestione Presenze</h2>
-                <p><strong>POST</strong> <code>/presenze</code>: Registra la presenza o assenza di uno studente a una lezione.</p>
+                <p>Endpoint per la gestione delle presenze (da definire).</p>
             </section>
 
             <section id="assenze">
                 <h2>Comunicazione Assenze</h2>
-                <p><strong>POST</strong> <code>/assenze</code>: Lo studente comunica l'assenza futura ad una lezione.</p>
+                <p>Endpoint per la comunicazione delle assenze (da definire).</p>
             </section>
         </main>
         <footer>

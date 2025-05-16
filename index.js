@@ -8,6 +8,7 @@ const adminRequests     = require('./routes/adminRequests');
 const userRoutes        = require('./routes/users');
 const iscrizioniRoutes  = require('./routes/iscrizioni');
 const corsiRoutes       = require('./routes/corsi');
+const lezioniRoutes      = require('./routes/lezioni');
 const logRoutes         = require('./routes/log');
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/admin', adminRequests);
 app.use('/users', userRoutes);   // <— qui monti il nuovo router
 app.use('/iscrizioni', iscrizioniRoutes);   // <— qui monti il nuovo router
 app.use('/corsi', corsiRoutes);   // <— qui monti il nuovo router
+app.use('/lezioni', lezioniRoutes);   // <— qui monti il nuovo router
 app.use('/log', logRoutes);   // <— qui monti il nuovo router
 
 const PORT = process.env.PORT || 3000;
