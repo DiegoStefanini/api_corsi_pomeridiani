@@ -1,4 +1,3 @@
-
 -- Database
 CREATE DATABASE IF NOT EXISTS `api_tepsit` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `api_tepsit`;
