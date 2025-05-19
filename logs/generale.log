@@ -118,3 +118,7 @@
   "username": "mirco-ciriello",
   "password": "scuola123"
 }
+[2025-05-19T15:49:22.164Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.43.4 - body: {
+  "username": "stefano-lenzi",
+  "password": "scuola123"
+}

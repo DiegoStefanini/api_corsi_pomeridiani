@@ -155,6 +155,19 @@
     "corso_id": 123
 }</code></pre>
 
+<h3>Crea un nuovo corso</h3>
+                <p><strong>PUT</strong> <code>/corsi</code>: Modifica un corso. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+                <p>Prende 'titolo' e/o 'descrizione' dal body e ricava 'docente_id' e 'scuola_id' dal JWT.</p>
+                <pre><code>{
+    "titolo": "Nome del corso",
+    "descrizione": "Descrizione del corso"
+}</code></pre>
+                <p>Risposta di successo:</p>
+                <pre><code>{
+    "message": "Corso modificato con successo.",
+    "corso_id": 123
+}</code></pre>
+
                 <h3>Elenca i corsi della scuola</h3>
                 <p><strong>GET</strong> <code>/corsi</code>: Elenco dei corsi disponibili nella scuola dell'utente autenticato. Restituisce i nomi di scuola e docente anziché gli ID.</p>
                 <p>Risposta di successo (esempio):</p>
