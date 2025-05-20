@@ -130,3 +130,27 @@
   "username": "matteo-balinzo",
   "password": "scuola123"
 }
+[2025-05-20T10:16:36.763Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "stefano-lenzi",
+  "password": "scuola123"
+}
+[2025-05-20T10:16:50.312Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "stefano-lenzi",
+  "password": "scuola123"
+}
+[2025-05-20T10:30:03.737Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "diego-stefanini",
+  "password": "scuola123"
+}
+[2025-05-20T13:22:55.001Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "diego-stefanini",
+  "password": "scuola123"
+}
+[2025-05-20T13:23:04.552Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "diego-stefanini",
+  "password": "scuola123"
+}
+[2025-05-20T13:45:59.005Z] POST /auth/token - Utente non autenticato - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "stefano-lenzi",
+  "password": "scuola123"
+}

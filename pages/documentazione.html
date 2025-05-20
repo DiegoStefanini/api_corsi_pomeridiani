@@ -352,14 +352,153 @@
             </section>
 
             <section id="gestione-presenze">
-                <h2>Gestione Presenze</h2>
-                <p>Endpoint per la gestione delle presenze (da definire).</p>
-            </section>
+    <h2>Gestione Presenze</h2>
+    <p>Questi endpoint gestiscono le presenze degli studenti alle lezioni.</p>
 
-            <section id="assenze">
-                <h2>Comunicazione Assenze</h2>
-                <p>Endpoint per la comunicazione delle assenze (da definire).</p>
-            </section>
+    <h3>Registra presenza</h3>
+    <p><strong>POST</strong> <code>/presenze</code>: Registra la presenza o l'assenza di uno studente a una lezione. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+    <p>Prende 'lezione_id', 'studente_id' e 'presente' (1 per presente, 0 per assente) dal body.</p>
+    <pre><code>{
+  "lezione_id": &lt;ID della lezione&gt;,
+  "studente_id": &lt;ID dello studente&gt;,
+  "presente": 1 o 0
+}</code></pre>
+    <p>Risposta di successo:</p>
+    <pre><code>{
+  "message": "Presenza registrata"
+}</code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Presenza già registrata"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Errore del server"
+    }
+    </code></pre>
+
+    <h3>Visualizza presenze per lezione</h3>
+    <p><strong>GET</strong> <code>/lezioni/:lezione_id/presenze</code>: Visualizza l'elenco delle presenze per una specifica lezione. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+    <p>Parametri URL:</p>
+    <ul>
+        <li><code>lezione_id</code>: L'ID della lezione di cui visualizzare le presenze.</li>
+    </ul>
+    <p>Risposta di successo (esempio):</p>
+    <pre><code>[
+  {
+    "id": &lt;ID dello studente&gt;,
+    "username": "&lt;Username dello studente&gt;",
+    "presente": "si" o "no",
+    "lezione_id": &lt;ID della lezione&gt;
+  },
+  ...
+]</code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Nessuna presenza trovata per questa lezione"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Errore del server"
+    }
+    </code></pre>
+
+    <h3>Visualizza tutte le presenze</h3>
+    <p><strong>GET</strong> <code>/presenze</code>: Visualizza l'elenco completo di tutte le presenze registrate nel sistema. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+    <p>Risposta di successo (esempio):</p>
+    <pre><code>[
+  {
+    "id": &lt;ID della presenza&gt;,
+    "lezione_id": &lt;ID della lezione&gt;,
+    "studente_id": &lt;ID dello studente&gt;,
+    "presente": 1 o 0,
+    "nome_studente": "&lt;Nome dello studente&gt;",
+    "nome_corso": "&lt;Nome del corso&gt;"
+  },
+  ...
+]</code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Errore del server"
+    }
+    </code></pre>
+
+    <h3>Elimina presenza</h3>
+    <p><strong>DELETE</strong> <code>/presenze/:id</code>: Elimina una registrazione di presenza specifica tramite il suo ID. Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.</p>
+    <p>Parametri URL:</p>
+    <ul>
+        <li><code>id</code>: L'ID della presenza da eliminare.</li>
+    </ul>
+    <p>Risposta di successo:</p>
+    <pre><code>{
+  "message": "Presenza eliminata con successo"
+}</code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Presenza non trovata"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Errore del server"
+    }
+    </code></pre>
+</section>
+
+<section id="assenze">
+    <h2>Comunicazione Assenze</h2>
+    <p>Questi endpoint permettono agli studenti di comunicare le proprie assenze.</p>
+
+    <h3>Segnala assenza anticipata</h3>
+    <p><strong>POST</strong> <code>/presenze/assenza</code>: Permette allo studente autenticato di segnalare un'assenza per una lezione futura. Richiede autenticazione e autorizzazione per 'studente'.</p>
+    <p>Prende 'lezione_id' dal body.</p>
+    <pre><code>{
+  "lezione_id": &lt;ID della lezione&gt;
+}</code></pre>
+    <p>Risposta di successo:</p>
+    <pre><code>{
+  "message": "Assenza notificata correttamente"
+}</code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "lezione_id mancante"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Non puoi notificare assenze per lezioni passate"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Non sei iscritto a questo corso"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Hai già segnalato la tua presenza/assenza"
+    }
+    </code></pre>
+    <p>Risposta di errore:</p>
+    <pre><code>
+    {
+      "message": "Errore interno"
+    }
+    </code></pre>
+</section>
         </main>
         <footer>
             <p>Diego Stefanini, Andrea Romboli, Matteo Balinzo</p>

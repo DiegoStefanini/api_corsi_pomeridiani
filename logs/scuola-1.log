@@ -47,3 +47,21 @@
 [2025-05-20T07:14:37.685Z] DELETE /iscrizioni - 2 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
   "corso_id": 3
 }
+[2025-05-20T10:21:33.728Z] POST /presenza - 6 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "lezione_id": 11,
+  "studente_id": 2,
+  "presente": 1
+}
+[2025-05-20T10:30:54.250Z] POST /iscrizioni - 3 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "corso_id": 1
+}
+[2025-05-20T10:30:58.903Z] POST /iscrizioni - 3 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "corso_id": 2
+}
+[2025-05-20T13:43:00.375Z] DELETE /presenza/2 - 3 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "lezione_id": 10
+}
+[2025-05-20T13:46:31.132Z] DELETE /presenza/2 - 6 (scuola_id: 1) - IP: ::1 - User-Agent: PostmanRuntime/7.44.0 - body: {
+  "username": "stefano-lenzi",
+  "password": "scuola123"
+}
