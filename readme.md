@@ -1,39 +1,36 @@
-## Come installare il progetto ? 
+# 📚 API Corsi Pomeridiani
 
-```bash
+# ⚙️ Setup del progetto
+
+'''
 git clone https://github.com/DiegoStefanini/api_corsi_pomeridiani.git
 cd api_corsi_pomeridiani
-npm install 
-```
 
-## Configura il database
+npm install
 
-Importa database.sql su mysql 
-Configura il file .env con le tue preferenze
+'''
 
-## Avvia index.js
+Modifica il file .env con le tue preferenze
 
-```bash
-node index.js 
-```
+Una REST API per la gestione dei corsi pomeridiani nelle scuole. Permette di registrare scuole, utenti, corsi e gestire l’autenticazione con JWT.
 
+## 🚀 Funzionalità
 
-## Se dovesse dare errori di compilazione:
+- ✅ Registrazione scuole
+- ✅ Login con token JWT
+- ✅ Creazione e gestione dei corsi
+- ✅ Ruoli: amministratore, docente, studente
+- ✅ Associazione tra corsi, scuole e docenti
+- ✅ Sistema di autorizzazione basato su ruolo
 
-```bash
-npm install bcrypt
-npm install dotenv
-npm install jsonwebtoken
-npm install mysql2
-npm install axios 
-```
+---
 
-## Documentazione API e Test con Postman
+## 🛠️ Tecnologie utilizzate
 
-```bash
-Questa API include una documentazione interattiva disponibile all'indirizzo:
-[https://www.google.com/search?q=http://localhost:3000/documentazione]
-(https://www.google.com/search?q=http://localhost:3000/documentazione). Qui puoi esplorare tutti gli endpoint disponibili e la loro struttura.
+- Node.js + Express
+- MySQL
+- JWT per autenticazione
+- Bcrypt per hashing password
+- Dotenv per gestione config
+- MySQL2 (driver)
 
-Per testare facilmente le chiamate API, in particolare quelle `POST`, `GET`, `PUT`, `DELETE`, puoi utilizzare Postman. Fai riferimento alla documentazione per i dettagli sui parametri da inviare nel corpo delle richieste.
-```

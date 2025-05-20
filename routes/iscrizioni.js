@@ -20,12 +20,9 @@ const router = express.Router();
  * }
  */
 router.post('/', authenticateToken, authorize('studente'), log(), async (req, res) => {
-    console.log(req);
     const { corso_id } = req.body; // Ora prendiamo solo corso_id dal corpo
     const scuola_id_utente = req.user.scuola_id; // ID scuola dell'utente autenticato (dal token JWT)
     const studente_id_autenticato = req.user.id; // ID dell'utente studente autenticato (dal token JWT)
-
-    console.log('Richiesta iscrizione ricevuta:', { corso_id, studente_id_autenticato, scuola_id_utente });
 
     // --- Validazione Input Base ---
     if (!corso_id || isNaN(parseInt(corso_id))) {
@@ -35,7 +32,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
     let conn;
     try {
         conn = await pool.getConnection();
-        console.log('Connessione al DB acquisita per POST /iscrizioni ');
         await conn.beginTransaction();
 
         // --- Verifica Esistenza e Appartenenza Corso ---
@@ -43,7 +39,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
             'SELECT id, scuola_id FROM corsi WHERE id = ?',
             [parseInt(corso_id)]
         );
-        console.log('Risultato query verifica corso:', corsoRows);
 
         if (corsoRows.length === 0) {
             await conn.rollback();
@@ -62,7 +57,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
             'SELECT id, ruolo FROM utenti WHERE id = ? AND scuola_id = ? AND ruolo = \'studente\'',
             [studente_id_autenticato, scuola_id_utente]
         );
-        console.log('Risultato query verifica utente (studente):', studenteRows);
 
         if (studenteRows.length === 0) {
             // Questo errore indica un'incoerenza: l'utente autenticato con ruolo studente
@@ -78,7 +72,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
             'INSERT INTO iscrizioni (studente_id, corso_id) VALUES (?, ?)',
             [studente_id_autenticato, parseInt(corso_id)]
         );
-        console.log('Risultato inserimento iscrizione:', result);
 
         await conn.commit();
         res.status(201).json({
@@ -114,7 +107,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
         });
     } finally {
         if (conn) {
-            console.log('Rilascio connessione DB per POST /iscrizioni');
             await conn.release();
         }
     }
@@ -126,7 +118,6 @@ router.post('/', authenticateToken, authorize('studente'), log(), async (req, re
  * Se vuoi limitare l'accesso, aggiungi il middleware `authorize`.
  */
 router.get('/', authenticateToken, authorize('studente', 'amministratore', 'docente'), async (req, res) => {
-    console.log("Eseguendo GET /iscrizioni");
     try {
         const [rows] = await pool.query(`
             SELECT
@@ -138,7 +129,6 @@ router.get('/', authenticateToken, authorize('studente', 'amministratore', 'doce
             LEFT JOIN iscrizioni i ON c.id = i.corso_id
             GROUP BY c.id, c.titolo, c.descrizione
         `);
-        console.log("Risultato della query:", rows);
         res.json(rows);
     } catch (err) {
         console.error('Errore in GET /iscrizioni:', err);

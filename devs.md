@@ -1,36 +1,3 @@
-## 🛠️ Stato dei lavori
-```
-Funzionalità | Stato
-Registrazione e approvazione scuole | ✅ Completato
-Login e JWT | ✅ Completato
-Creazione utenti | ✅ Completato
-Creazione corsi e assegnazione docenti | 🟡 Da completare
-Gestione lezioni | 🟡 Da completare
-Iscrizione studenti | 🟡 Da completare
-Gestione presenze | 🔲 In sviluppo
-Log azioni locali per scuola | 🔲 Da implementare
-Webhook Discord logging globale | 🔲 Da implementare
-```
-## 🚨 Problemi o cose da risolvere
-
-```
-Area            |       Problema       |    Soluzione prevista
-Sicurezza API   |   Acc. super-admin   |    Protezione con login a token anche lato admin
-Rate Limit      |  Nessun rate-limit   |    Aggiungere express-rate-limit
-Valida. dati    | Base ma migliorabile |    Introdurre express-validator
-CORS            |   Molto permissivo   |    Limitare ai domini autorizzati
-```
-## Divisione lavori
-
-```
-corsi.js	Creazione, modifica, assegnazione docente ai corsi   Andrea
-lezioni.js	Creazione, modifica, cancellazione lezioni	Andrea
-iscrizioni.js	Iscrizione studente ai corsi, visualizzare iscrizioni    Matteo
-frequenza.js	Registrazione presenza a lezione + Comunicazione assenze programmate    Matteo
-auth.js	Registrazione scuole, Login, Refresh token	Diego
-logs.js	Visualizzazione log delle azioni utenti e webhook Discord	Diego
-```
-
 ## 🤝 Workflow di collaborazione (Git & GitHub)
 
 Per lavorare insieme senza conflitti o perdita di codice, seguiamo questo flusso di lavoro:
