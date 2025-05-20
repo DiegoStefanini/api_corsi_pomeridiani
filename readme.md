@@ -6,13 +6,13 @@ https://docs.google.com/document/d/1oZxLYK4Gh4fcB0ajfh4SrRlKBh3tySyK5Sp4rha6B1Y/
 
 # ⚙️ Setup del progetto
 
-'''
+```bash
 git clone https://github.com/DiegoStefanini/api_corsi_pomeridiani.git
 cd api_corsi_pomeridiani
 
 npm install
 
-'''
+```
 
 Modifica il file .env con le tue preferenze
 
