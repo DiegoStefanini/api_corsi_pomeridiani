@@ -10,6 +10,7 @@ const iscrizioniRoutes  = require('./routes/iscrizioni');
 const corsiRoutes       = require('./routes/corsi');
 const lezioniRoutes      = require('./routes/lezioni');
 const logRoutes         = require('./routes/log');
+const presenzaRoutes         = require('./routes/presenza');
 const app = express();
 
 app.use(express.json());
@@ -36,6 +37,8 @@ app.use('/iscrizioni', iscrizioniRoutes);   // <— qui monti il nuovo router
 app.use('/corsi', corsiRoutes);   // <— qui monti il nuovo router
 app.use('/lezioni', lezioniRoutes);   // <— qui monti il nuovo router
 app.use('/log', logRoutes);   // <— qui monti il nuovo router
+app.use('/presenza', presenzaRoutes);   // <— qui monti il nuovo router
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

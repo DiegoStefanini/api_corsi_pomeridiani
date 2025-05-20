@@ -4,7 +4,7 @@ const {
     authenticateToken,
     authorize // Lo useremo se vogliamo restringere ulteriormente alcuni endpoint
 } = require('../middleware/checkAuth'); // Assicurati che il percorso sia corretto
-
+const log = require('../middleware/logs');
 const router = express.Router();
 
 // GET /lezioni/:corsoId
@@ -41,7 +41,7 @@ router.get('/:corsoId', authenticateToken, authorize('studente', 'docente', 'amm
 // POST /lezioni
 // Crea una nuova lezione per un corso.
 // Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.
-router.post('/', authenticateToken, authorize('docente', 'amministratore'), async (req, res) => {
+router.post('/', authenticateToken,log(), authorize('docente', 'amministratore'), async (req, res) => {
     const { corso_id, data, orario_inizio, orario_fine, id_aula } = req.body;
 
     // Validazione di base
@@ -49,7 +49,29 @@ router.post('/', authenticateToken, authorize('docente', 'amministratore'), asyn
         return res.status(400).json({ error: 'Corso ID, data, orario di inizio, orario di fine e ID aula sono obbligatori.' });
     }
 
+    // Controllo che l'orario di fine sia successivo all'orario di inizio
+    if (orario_fine <= orario_inizio) {
+        return res.status(400).json({ error: 'L\'orario di fine deve essere successivo all\'orario di inizio.' });
+    }
+
+    // Controllo sulla disponibilità dell'aula
     try {
+        const [conflitti] = await pool.query(
+            `SELECT id FROM lezioni
+             WHERE id_aula = ? AND data = ?
+             AND (
+                 (orario_inizio < ? AND orario_fine > ?) OR
+                 (orario_inizio < ? AND orario_fine > ?) OR
+                 (orario_inizio >= ? AND orario_fine <= ?)
+             )`,
+            [id_aula, data, orario_fine, orario_inizio, orario_inizio, orario_fine, orario_inizio, orario_fine]
+        );
+
+        if (conflitti.length > 0) {
+            return res.status(409).json({ error: 'L\'aula non è disponibile in questo orario.' });
+        }
+
+        // Se non ci sono conflitti, procedi con l'inserimento
         const [result] = await pool.query(
             'INSERT INTO lezioni (corso_id, data, orario_inizio, orario_fine, id_aula) VALUES (?, ?, ?, ?, ?)',
             [corso_id, data, orario_inizio, orario_fine, id_aula]
@@ -69,7 +91,7 @@ router.post('/', authenticateToken, authorize('docente', 'amministratore'), asyn
 // DELETE /lezioni/:id
 // Elimina una lezione specifica.
 // Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.
-router.delete('/:id', authenticateToken, authorize('docente', 'amministratore'), async (req, res) => {
+router.delete('/:id', authenticateToken,log(), authorize('docente', 'amministratore'), async (req, res) => {
     const lezioneId = parseInt(req.params.id);
 
     if (isNaN(lezioneId)) {
