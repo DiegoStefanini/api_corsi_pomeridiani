@@ -1,5 +1,9 @@
 # 📚 API Corsi Pomeridiani
 
+Qua potrete trovare la descrizione e le scelte progettuoali del nostro progetto 
+
+https://docs.google.com/document/d/1oZxLYK4Gh4fcB0ajfh4SrRlKBh3tySyK5Sp4rha6B1Y/edit?usp=sharing
+
 # ⚙️ Setup del progetto
 
 '''
