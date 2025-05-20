@@ -106,4 +106,3 @@ CREATE TABLE IF NOT EXISTS `presenze` (
   CONSTRAINT `FK_presenze_lezioni` FOREIGN KEY (`lezione_id`) REFERENCES `lezioni` (`id`),
   CONSTRAINT `FK_presenze_studenti` FOREIGN KEY (`studente_id`) REFERENCES `utenti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-

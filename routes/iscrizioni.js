@@ -6,6 +6,7 @@ const {
     authorize
 } = require('../middleware/checkAuth'); // Assicurati che il percorso sia corretto
 
+const log = require('../middleware/logs')
 const router = express.Router();
 
 /**
@@ -18,7 +19,7 @@ const router = express.Router();
  * corso_id: number // L'ID del corso a cui iscriversi
  * }
  */
-router.post('/', authenticateToken, authorize('studente'), async (req, res) => {
+router.post('/', authenticateToken, authorize('studente'), log(), async (req, res) => {
     console.log(req);
     const { corso_id } = req.body; // Ora prendiamo solo corso_id dal corpo
     const scuola_id_utente = req.user.scuola_id; // ID scuola dell'utente autenticato (dal token JWT)
@@ -124,7 +125,7 @@ router.post('/', authenticateToken, authorize('studente'), async (req, res) => {
  * Richiede autenticazione (ma non specifica il ruolo, quindi accessibile a tutti gli utenti autenticati).
  * Se vuoi limitare l'accesso, aggiungi il middleware `authorize`.
  */
-router.get('/', authenticateToken, authorize('studente', 'amministratore'), async (req, res) => {
+router.get('/', authenticateToken, authorize('studente', 'amministratore', 'docente'), async (req, res) => {
     console.log("Eseguendo GET /iscrizioni");
     try {
         const [rows] = await pool.query(`
@@ -152,7 +153,7 @@ router.get('/', authenticateToken, authorize('studente', 'amministratore'), asyn
  * Richiede autenticazione (ma non specifica il ruolo, quindi accessibile a tutti gli utenti autenticati).
  * Se vuoi limitare l'accesso, aggiungi il middleware `authorize`.
  */
-router.get('/:corso_id', authenticateToken,authorize('studente', 'amministratore'), async (req, res) => {
+router.get('/:corso_id', authenticateToken,authorize('studente', 'amministratore', 'docente'), async (req, res) => {
     const corsoId = req.params.corso_id;
 
     // Validazione del parametro
@@ -183,33 +184,6 @@ router.get('/:corso_id', authenticateToken,authorize('studente', 'amministratore
 });
 
 /**
- * GET /iscrizioni 
- * Recupera l'elenco dei corsi a cui lo studente autenticato è iscritto.
- * Protetto: authenticateToken + authorize('studente')
- */
-router.get('/mie-iscrizioni', authenticateToken, authorize('studente'), async (req, res) => {
-    const studenteId = req.user.id;
-
-    try {
-        const [rows] = await pool.query(`
-            SELECT
-                c.id AS corso_id,
-                c.titolo AS nome_corso,
-                c.descrizione AS descrizione_corso
-            FROM iscrizioni i
-            JOIN corsi c ON i.corso_id = c.id
-            WHERE i.studente_id = ?
-        `, [studenteId]);
-
-        res.json(rows);
-
-    } catch (err) {
-        console.error('Errore in GET /iscrizioni/mie-iscrizioni:', err);
-        res.status(500).json({ error: 'Errore interno del server' });
-    }
-});
-
-/**
  * DELETE /iscrizioni
  * Permette allo studente autenticato (ruolo 'studente') di cancellare la propria iscrizione a un corso specifico.
  * Protetto: authenticateToken + authorize('studente')
@@ -218,7 +192,7 @@ router.get('/mie-iscrizioni', authenticateToken, authorize('studente'), async (r
  * corso_id: number // L'ID del corso da cui disiscriversi
  * }
  */
-router.delete('/', authenticateToken, authorize('studente'), async (req, res) => {
+router.delete('/', authenticateToken, authorize('studente'),log(), async (req, res) => {
     const { corso_id } = req.body;
     const studente_id = req.user.id;
 
