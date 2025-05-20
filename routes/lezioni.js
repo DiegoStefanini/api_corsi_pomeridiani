@@ -4,7 +4,7 @@ const {
     authenticateToken,
     authorize // Lo useremo se vogliamo restringere ulteriormente alcuni endpoint
 } = require('../middleware/checkAuth'); // Assicurati che il percorso sia corretto
-
+const log = require('../middleware/logs');
 const router = express.Router();
 
 // GET /lezioni/:corsoId
@@ -41,7 +41,7 @@ router.get('/:corsoId', authenticateToken, authorize('studente', 'docente', 'amm
 // POST /lezioni
 // Crea una nuova lezione per un corso.
 // Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.
-router.post('/', authenticateToken, authorize('docente', 'amministratore'), async (req, res) => {
+router.post('/', authenticateToken,log(), authorize('docente', 'amministratore'), async (req, res) => {
     const { corso_id, data, orario_inizio, orario_fine, id_aula } = req.body;
 
     // Validazione di base
@@ -91,7 +91,7 @@ router.post('/', authenticateToken, authorize('docente', 'amministratore'), asyn
 // DELETE /lezioni/:id
 // Elimina una lezione specifica.
 // Richiede autenticazione e autorizzazione per 'docente' o 'amministratore'.
-router.delete('/:id', authenticateToken, authorize('docente', 'amministratore'), async (req, res) => {
+router.delete('/:id', authenticateToken,log(), authorize('docente', 'amministratore'), async (req, res) => {
     const lezioneId = parseInt(req.params.id);
 
     if (isNaN(lezioneId)) {

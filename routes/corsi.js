@@ -4,7 +4,7 @@ const {
     authenticateToken,
     authorize
 } = require('../middleware/checkAuth');
-
+const log = require('../middleware/logs');
 const router = express.Router();
 
 // GET /corsi
@@ -63,7 +63,7 @@ router.get('/:id', authenticateToken, authorize('studente', 'docente', 'amminist
 // POST /corsi
 // Crea un nuovo corso. Solo i docenti e gli amministratori possono creare corsi.
 // Prende 'titolo' e 'descrizione' dal body e ricava 'docente_id' e 'scuola_id' dal JWT.
-router.post('/', authenticateToken, authorize('docente'), async (req, res) => {
+router.post('/', authenticateToken,log(), authorize('docente'), async (req, res) => {
     const { titolo, descrizione } = req.body;
     const docenteId = req.user.id;
     const scuolaId = req.user.scuola_id;
@@ -90,7 +90,7 @@ router.post('/', authenticateToken, authorize('docente'), async (req, res) => {
 
 // PUT /corsi/:id
 // Permette a un docente di modificare il titolo e la descrizione dei propri corsi.
-router.put('/:id', authenticateToken, authorize('docente'), async (req, res) => {
+router.put('/:id', authenticateToken,log(), authorize('docente'), async (req, res) => {
     const corsoId = parseInt(req.params.id);
     const { titolo, descrizione } = req.body;
     const docenteId = req.user.id; // ID del docente dal token
@@ -147,7 +147,7 @@ router.put('/:id', authenticateToken, authorize('docente'), async (req, res) => 
 
 // DELETE /corsi/:id
 // Elimina un corso specifico. Solo i docenti e gli amministratori possono eliminare corsi.
-router.delete('/:id', authenticateToken, authorize('amministratore', 'docente'), async (req, res) => {
+router.delete('/:id', authenticateToken,log(), authorize('amministratore', 'docente'), async (req, res) => {
     const corsoId = parseInt(req.params.id);
 
     if (isNaN(corsoId)) {
