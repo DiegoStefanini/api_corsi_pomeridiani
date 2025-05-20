@@ -122,7 +122,7 @@ router.post('/requests/:id/approve', adminAuth, log(), async (req, res) => {
         if (!reqRow) {
             await conn.rollback();
             return res.status(404).send('Richiesta non trovata o già processata.');
-        }
+        }   
     
         // 2) Crea la scuola
         const [schoolResult] = await conn.query(

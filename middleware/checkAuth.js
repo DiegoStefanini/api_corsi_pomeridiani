@@ -8,7 +8,7 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
  * authenticateToken
  * Verifica che arrivi un JWT valido in Authorization: Bearer <token>
  * Popola req.user con { id, ruolo, scuola_id } estratti dal payload
- */
+*/
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -33,7 +33,7 @@ function authenticateToken(req, res, next) {
  * authorize
  * Restituisce un middleware che consente l’accesso solo se
  * req.user.ruolo è incluso in allowedRoles
- */
+*/
 function authorize(...allowedRoles) {
     return (req, res, next) => {
         if (!req.user) {

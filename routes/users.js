@@ -45,15 +45,16 @@ router.post('/', authenticateToken, authorize('amministratore'), log(),
             const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
             // inserimento utente
-            await conn.query(
+            const [result] = await conn.query(
                 `INSERT INTO utenti
                  (username, password_hash, ruolo, scuola_id)
                  VALUES (?, ?, ?, ?)`,
                 [username, passwordHash, ruolo, scuola_id]
             );
 
+            
             await conn.commit();
-            res.status(201).json({ message: 'Utente creato con successo.' });
+            res.status(201).json({ id: result.insertId });
 
         } catch (err) {
             if (conn) await conn.rollback();

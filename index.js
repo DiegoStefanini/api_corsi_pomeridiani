@@ -15,6 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // static HTML
+app.get('/', (req, res) => {
+    res.redirect('/documentazione');
+});
+
 app.get('/documentazione', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages/documentazione.html'));
 });

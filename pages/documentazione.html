@@ -116,14 +116,26 @@
                     <li>Registrare assenze e presenze</li>
                     <li>Controllare i log delle attività scolastiche</li>
                 </ul>
+                    <br>            
+                <h2>Come accedo all'API ?</h2>
+
+                <p>Per accedere alla nostra API devi fare richiesta al seguente url: <a href="http://localhost:3000/registra-scuola" target="_blank" rel="noopener">http://localhost:3000/registra-scuola</a></p>
+                <p>Attendi che un admin approvi la tua richiesta e poi potrai usare i nostri endpoint ottenendo un token con le tue credenziali</p>
+
             </section>
 
             <section id="login">
                 <h2>Login</h2>
                 <p><strong>POST</strong> <code>/auth/token</code>: autentica un utente e restituisce un JWT (<code>accessToken</code>).</p>
-                <pre><code>{
+                <pre><code>
+{
   "username": "admin_x",
   "password": "password123"
+}</code></pre>
+ <h2>Login</h2>
+                <p>Risposta esempio:</p>
+                <pre><code>{
+  "accessToken": "gòlkloandfoandfajne"
 }</code></pre>
             </section>
 
@@ -136,6 +148,13 @@
   "password": "pwdDocente",
   "ruolo": "docente"
 }</code></pre>
+
+<p>Restituisce l'id dell'utente appena creato. Risposta esempio:</p>
+                <pre><code>{
+  "id": 69,
+
+}</code></pre>
+
             </section>
 
             <section id="gestione-corsi">

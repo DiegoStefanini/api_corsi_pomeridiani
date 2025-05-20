@@ -1,5 +1,5 @@
 -- Database
-CREATE DATABASE IF NOT EXISTS `api_tepsit` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `api_tepsit`;
 USE `api_tepsit`;
 
 CREATE TABLE IF NOT EXISTS `registration_requests` (
@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `corsi` (
   `id` int(11) AUTO_INCREMENT,
   `titolo` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `descrizione` text COLLATE utf8mb4_general_ci,
-  `orario` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `scuola_id` int NOT NULL,
   `docente_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -67,11 +66,14 @@ CREATE TABLE IF NOT EXISTS `corsi` (
   CONSTRAINT `FK_corsi_docenti` FOREIGN KEY (`docente_id`) REFERENCES `utenti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 -- Lezioni
 CREATE TABLE IF NOT EXISTS `lezioni` (
   `id` int(11) AUTO_INCREMENT,
   `corso_id` int NOT NULL,
-  `data` date NOT NULL,
+  `data` date NOT NULL DEFAULT current_timestamp(),
+  `orario_inizio` time NOT NULL,
+  `orario_fine` time NOT NULL
   `id_aula` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `corso_id` (`corso_id`),
